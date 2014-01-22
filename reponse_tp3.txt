@@ -1,0 +1,139 @@
+TP Elfe 
+Antonin Carette
+Tanguy Maréchal
+
+
+Question 1
+trajet(X,Y) :- metro(_,X,Y).
+trajet(X,Y) :- bus(_,X,Y).
+trajet(X,Y) :- trajet(X,Z), trajet(Z,Y).
+
+DES-Datalog> trajet(meunier,euroteleport)
+
+{
+  trajet(meunier,euroteleport)
+}
+Info: 1 tuple computed.
+Il existe bien un trajet entre meunier et euroteleport
+
+
+DES-Datalog> trajet(triolo,saturne)
+
+{
+}
+Info: 0 tuples computed.
+Il n'existe aucun trajet entre triolo et saturne
+
+
+
+Question 2 
+Info: 1069 tuples computed.
+
+
+
+Question 3 
+Info: 10372 tuples computed.
+
+Le temps de calcul est beaucoup plus long pour la requête sur l'ensemble des trajets : quasi-instantané pour reduit.dl et plus d'une minute pour complet.dl
+
+
+Question 4
+trajetmetro(X,Y) :- metro(_,X,Y).
+trajetmetro(X,Z) :- metro(_,X,Y), trajetmetro(Y,Z).
+
+DES-Datalog> trajetmetro(X,Y)
+{
+...
+}
+Info: 219 tuples computed.
+
+DES-Datalog> trajetmetro(gare_lille_flandres,_)
+
+{
+  trajetmetro(gare_lille_flandres,ch_dron),
+  trajetmetro(gare_lille_flandres,chr_b_calmette),
+  trajetmetro(gare_lille_flandres,colbert),
+  trajetmetro(gare_lille_flandres,euroteleport),
+  trajetmetro(gare_lille_flandres,gambetta),
+  trajetmetro(gare_lille_flandres,gare_lille_europe),
+  trajetmetro(gare_lille_flandres,gare_lille_flandres),
+  trajetmetro(gare_lille_flandres,jean_jaures),
+  trajetmetro(gare_lille_flandres,mairie_de_mons),
+  trajetmetro(gare_lille_flandres,porte_des_postes),
+  trajetmetro(gare_lille_flandres,republique_beaux_arts),
+  trajetmetro(gare_lille_flandres,tourcoing_centre),
+  trajetmetro(gare_lille_flandres,wazemmes)
+}
+Info: 13 tuples computed.
+
+
+
+Question 5
+DES-Datalog> trajetmetro(X,Y)
+
+{
+  trajetmetro(bois_blancs,ch_dron),
+...
+  trajetmetrobus(wazemmes,sangnier)
+}
+Info: 534 tuples computed.
+
+
+DES-Datalog> trajetmetrobus(gare_lille_europe,Y)
+
+{
+  trajetmetrobus(gare_lille_europe,chr_b_calmette),
+  trajetmetrobus(gare_lille_europe,gambetta),
+  trajetmetrobus(gare_lille_europe,montebello),
+  trajetmetrobus(gare_lille_europe,wazemmes)
+}
+Info: 4 tuples computed.
+
+
+
+Question 6 :
+DES> trajetexclusif(A,B) 
+
+{
+  trajetexclusif(bas_jardin,bas_jardin),
+...
+  trajetexclusif(sangnier,halluin_gounod)
+}
+Info: 305 tuples computed.          
+
+DES> trajetexclusif(gare_lille_flandres, gare_lille_europe) 
+
+{
+}
+Info: 0 tuples computed. 
+Pas de trajet exclusif entre les 2 gares. Logique car il existe un metro qui relie des 2 gares.
+
+
+
+
+Question 7
+  trajetexclusif(zenith,zenith)
+}
+Info: 2102 tuples computed.     
+
+     
+DES> trajetexclusif(gare_lille_flandres, gare_lille_europe) 
+
+{
+}
+Info: 0 tuples computed.          
+Logique de trouver la même réponse pour les 2 gares.
+
+Question 8 :
+
+Question 9 :
+
+Question 10 :
+DES> solutions(X,Y) 
+
+{
+  solutions(tigre,princesse)
+}
+Info: 1 tuple computed.          
+
+

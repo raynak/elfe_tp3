@@ -1,0 +1,92 @@
+metro(1,quatre_cantons,cite_scientifique).
+metro(1,cite_scientifique,triolo).
+metro(1,triolo,fives).
+metro(1,fives,caulier).
+metro(1,caulier,gare_lille_flandres).
+metro(1,gare_lille_flandres,republique_beaux_arts).
+metro(1,republique_beaux_arts,gambetta).
+metro(1,gambetta,wazemmes).
+metro(1,wazemmes,porte_des_postes).
+metro(1,porte_des_postes,chr_b_calmette).
+
+metro(2,saint_philibert,bois_blancs).
+metro(2,bois_blancs,cormontaigne).
+metro(2,cormontaigne,montebello).
+metro(2,montebello,porte_des_postes).
+metro(2,porte_des_postes,gare_lille_flandres).
+metro(2,gare_lille_flandres,gare_lille_europe).
+metro(2,gare_lille_europe,mairie_de_mons).
+metro(2,mairie_de_mons,jean_jaures).
+metro(2,jean_jaures,euroteleport).
+metro(2,euroteleport,tourcoing_centre).
+metro(2,tourcoing_centre,colbert).
+metro(2,colbert,ch_dron).
+
+
+bus(91,gare_lille_flandres,lycee_pasteur).
+bus(91,lycee_pasteur,chaufour).
+bus(91,chaufour,pont_de_marcq).
+bus(91,pont_de_marcq,mont_de_bondues).
+bus(91,mont_de_bondues,roncq_place).
+bus(91,roncq_place,parc_des_sports).
+bus(91,parc_des_sports,halluin_douane).
+bus(91,halluin_douane,jean_jaures).
+bus(91,jean_jaures,sangnier).
+bus(91,sangnier,eglise_du_colbras).
+bus(91,sangnier,halluin_gounod).
+
+
+bus(citadine_1,porte_des_postes,cormontaigne).
+bus(citadine_1,cormontaigne,place_marechal_leclerc).
+bus(citadine_1,place_marechal_leclerc,colbert).
+bus(citadine_1,colbert,sacre_coeur).
+bus(citadine_1,sacre_coeur,republique_beaux_arts).
+bus(citadine_1,republique_beaux_arts,gare_lille_flandres).
+bus(citadine_1,gare_lille_flandres,gare_lille_europe).
+bus(citadine_1,gare_lille_europe,parvis_de_rotterdam).
+bus(citadine_1,parvis_de_rotterdam,rue_de_cambrai).
+bus(citadine_1,rue_de_cambrai,douai_arras).
+bus(citadine_1,rue_de_cambrai,bas_jardin).
+bus(citadine_1,bas_jardin,meunier).
+bus(citadine_1,meunier,porte_des_postes).
+
+%trajet entre 2 arrêts quelconques : question 2
+trajet(X,Y) :- metro(_,X,Y).
+trajet(X,Y) :- bus(_,X,Y).
+trajet(X,Y) :- trajet(X,Z), trajet(Z,Y).
+ 
+%trajet uniquement en metro : question 4
+trajetmetro(X,Y) :- metro(_,X,Y).
+trajetmetro(X,Z) :- metro(_,X,Y), trajetmetro(Y,Z).
+
+%trajet uniquement en bus
+trajetbus(X,Y) :- bus(_,X,Y).
+trajetbus(X,Z) :- bus(_,X,Y), trajetbus(Y,Z).
+
+%trajet combinant metro et bus sans etre uniquement en metro, ni uniquement en bus : question 5
+trajetmetrobus(X,Y) :- trajet(X,Y), not(trajetmetro(X,Y)), not(trajetbus(X,Y)).
+
+%2 arrêts de bus consecutifs
+consecutif(C,D) :- bus(_,C,D).
+
+%trajet exclusivement en bus : question 6
+%c'est à dire qu'il n'existe aucune paire d'arrêt consécutif que l'on joindre en utilisant le metro
+%cas de base
+trajetexclusif(A,B) :- consecutif(A,B), not(trajetmetro(A,B)).
+%cas general
+trajetexclusif(A,B) :- trajetbus(A,C), trajetexclusif(C,B).
+
+%trajet sans exclusivite : question 8
+%a et b sont des stations de metro
+%il existe un trajet entre a et b
+%il n'existe pas de trajetexclusif entre a et b
+pairesansexclusivite(A,B) :- metro(_,A,_), metro(_,_,B), trajet(A,B), not(trajetexclusif(A,B)), not(A=B).
+
+%metro inutile : question 9 
+%a et b sont des stations de bus
+%on va e a à c et de c à b en bus
+%c est en même temps une station de départ et d'arrivée en métro
+%il existe un trajet de c à c employant le métro (le prédicat trajet permet tous le types de trajets intermédiaire dont métro)
+%si on prend un arrêt D, une fois avoir pris le métro à la station C jusqu'à la station suivante F, il n'est pas possible
+%de rejoindre D quelque soit le trajet choisi 
+metroinutile(A,B) :- bus(_,A,_), bus(_,_,B), trajetbus(A,C), trajetbus(C,B), trajet(C,C), metro(_,C,_), metro(_,_,C), trajetbus(A,D), metro(_,C,F), not(trajet(F,D)).
