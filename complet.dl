@@ -125,25 +125,53 @@ metro(2,phalempins,pont_de_neuville).
 metro(2,pont_de_neuville,bourgogne).
 metro(2,bourgogne,ch_dron).
 
+%predicat permettant d'affirmer que l'on peut aller dans les deux sens entre 2 arrêts de bus ou de métro
+%s'il existe un trajet allant de Y à X alors on peut aussi aller de X à Y
+metro(_X,Y) :- metro(_,Y,X).
+bus(_,X,Y) :- bus(_,Y,X).
 
-
+%trajet entre 2 arrêts quelconques : question 2
 trajet(X,Y) :- metro(_,X,Y).
 trajet(X,Y) :- bus(_,X,Y).
 trajet(X,Y) :- trajet(X,Z), trajet(Z,Y).
- 
+trajet(X,Y) :- trajet(Y,X).
 
+%trajet uniquement en metro : question 4
 trajetmetro(X,Y) :- metro(_,X,Y).
 trajetmetro(X,Z) :- metro(_,X,Y), trajetmetro(Y,Z).
+trajetmetro(X,Y) :- trajetmetro(Y,X).
 
+%trajet uniquement en bus
 trajetbus(X,Y) :- bus(_,X,Y).
 trajetbus(X,Z) :- bus(_,X,Y), trajetbus(Y,Z).
+trajetbus(X,Y) :- trajetbus(Y,X).
 
+%trajet combinant metro et bus sans etre uniquement en metro, ni uniquement en bus : question 5
 trajetmetrobus(X,Y) :- trajet(X,Y), not(trajetmetro(X,Y)), not(trajetbus(X,Y)).
+trajetmetrobus(X,Y) :- trajetmetrobus(Y,X).
 
-
-
+%2 arrêts de bus consecutifs
 consecutif(C,D) :- bus(_,C,D).
+consecutif(C,D) :- consecutif(D,C).
 
+%trajet exclusivement en bus : question 6
+%c'est à dire qu'il n'existe aucune paire d'arrêt consécutif que l'on joindre en utilisant le metro
 %cas de base
 trajetexclusif(A,B) :- consecutif(A,B), not(trajetmetro(A,B)).
-trajetexclusif(A,B) :- trajetexclusif(A,C), trajetbus(C,B).
+%cas general
+trajetexclusif(A,B) :- trajetexclusif(A,C), trajetexclusif(C,B).
+
+%trajet sans exclusivite : question 8
+%a et b sont des stations de metro
+%il existe un trajet entre a et b
+%il n'existe pas de trajetexclusif entre a et b
+pairesansexclusivite(A,B) :- metro(_,A,_), metro(_,_,B), trajet(A,B), not(trajetexclusif(A,B)), not(A=B).
+
+%metro inutile : question 9 
+%a et b sont des stations de bus
+%on va de a à c et de c à b en bus
+%c est en même temps une station de départ et d'arrivée en métro
+%il existe un trajet de c à c employant le métro (le prédicat trajet permet tous le types de trajets intermédiaire dont métro)
+%si on prend un arrêt D, une fois avoir pris le métro à la station C jusqu'à la station suivante F, il n'est pas possible
+%de rejoindre D quelque soit le trajet choisi 
+metroinutile(A,B) :- bus(_,A,_), bus(_,_,B), trajetbus(A,C), trajetbus(C,B), trajet(C,C), metro(_,C,_), metro(_,_,C), trajetbus(A,D), metro(_,C,F), not(trajet(F,D)).
