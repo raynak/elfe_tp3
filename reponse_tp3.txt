@@ -3,10 +3,16 @@ Antonin Carette
 Tanguy Maréchal
 
 
-Question 1
+Question 2
+metro(_X,Y) :- metro(_,Y,X).
+bus(_,X,Y) :- bus(_,Y,X).
+
+
+
 trajet(X,Y) :- metro(_,X,Y).
 trajet(X,Y) :- bus(_,X,Y).
 trajet(X,Y) :- trajet(X,Z), trajet(Z,Y).
+
 
 DES-Datalog> trajet(meunier,euroteleport)
 
@@ -26,13 +32,17 @@ Il n'existe aucun trajet entre triolo et saturne
 
 
 
-Question 2 
-Info: 1069 tuples computed.
-
-
-
 Question 3 
-Info: 10372 tuples computed.
+Temps et quantité de la question 2 pour la requête trajet(X,Y)
+reduit
+Info: 1521 tuples computed. 
+Info: 1567 tuples in the answer table.  
+Info: 3 tuples in the call table.  
+
+complet 
+Info: 13456 tuples computed, 1 minute 45 secondes
+Info: 13579 tuples in the answer table.
+Info: 3 tuples in the call table. 
 
 Le temps de calcul est beaucoup plus long pour la requête sur l'ensemble des trajets : quasi-instantané pour reduit.dl et plus d'une minute pour complet.dl
 
@@ -45,61 +55,65 @@ DES-Datalog> trajetmetro(X,Y)
 {
 ...
 }
-Info: 219 tuples computed.
+Info: 468 tuples computed. 
 
-DES-Datalog> trajetmetro(gare_lille_flandres,_)
+DES>  trajetmetro(gare_lille_flandres,Y) 
 
 {
+  trajetmetro(gare_lille_flandres,bois_blancs),
+  trajetmetro(gare_lille_flandres,caulier),
   trajetmetro(gare_lille_flandres,ch_dron),
   trajetmetro(gare_lille_flandres,chr_b_calmette),
+  trajetmetro(gare_lille_flandres,cite_scientifique),
   trajetmetro(gare_lille_flandres,colbert),
+  trajetmetro(gare_lille_flandres,cormontaigne),
   trajetmetro(gare_lille_flandres,euroteleport),
+  trajetmetro(gare_lille_flandres,fives),
   trajetmetro(gare_lille_flandres,gambetta),
   trajetmetro(gare_lille_flandres,gare_lille_europe),
   trajetmetro(gare_lille_flandres,gare_lille_flandres),
   trajetmetro(gare_lille_flandres,jean_jaures),
   trajetmetro(gare_lille_flandres,mairie_de_mons),
+  trajetmetro(gare_lille_flandres,montebello),
   trajetmetro(gare_lille_flandres,porte_des_postes),
+  trajetmetro(gare_lille_flandres,quatre_cantons),
   trajetmetro(gare_lille_flandres,republique_beaux_arts),
+  trajetmetro(gare_lille_flandres,saint_philibert),
   trajetmetro(gare_lille_flandres,tourcoing_centre),
+  trajetmetro(gare_lille_flandres,triolo),
   trajetmetro(gare_lille_flandres,wazemmes)
 }
-Info: 13 tuples computed.
+Info: 22 tuples computed.  
 
 
 
 Question 5
-DES-Datalog> trajetmetro(X,Y)
+DES-Datalog> trajetmetrobus(X,Y)
 
 {
-  trajetmetro(bois_blancs,ch_dron),
+
 ...
   trajetmetrobus(wazemmes,sangnier)
 }
-Info: 534 tuples computed.
+Info:  553 tuples computed.   
 
 
-DES-Datalog> trajetmetrobus(gare_lille_europe,Y)
+DES>  trajetmetrobus(gare_lille_europe,Y) 
 
 {
-  trajetmetrobus(gare_lille_europe,chr_b_calmette),
-  trajetmetrobus(gare_lille_europe,gambetta),
-  trajetmetrobus(gare_lille_europe,montebello),
-  trajetmetrobus(gare_lille_europe,wazemmes)
+  trajetmetrobus(gare_lille_europe,chr_b_calmette)
 }
-Info: 4 tuples computed.
+Info: 1 tuple computed.    
 
 
 
 Question 6 :
 DES> trajetexclusif(A,B) 
-
 {
-  trajetexclusif(bas_jardin,bas_jardin),
 ...
-  trajetexclusif(sangnier,halluin_gounod)
 }
-Info: 305 tuples computed.          
+
+Info: 218 tuples computed.                
 
 DES> trajetexclusif(gare_lille_flandres, gare_lille_europe) 
 
@@ -110,23 +124,47 @@ Pas de trajet exclusif entre les 2 gares. Logique car il existe un metro qui rel
 
 
 
-
 Question 7
-  trajetexclusif(zenith,zenith)
-}
-Info: 2102 tuples computed.     
+Temps et quantité de la question 6 pour la requête trajetexclusif(X,Y)
+reduit
+Info: 218 tuples computed,  1 seconde 
+Info: 822 tuples in the answer table. 
+Info: 99 tuples in the call table.        
+detail dans le fichier "trajetexclusifreduit.txt
+
+complet
+Info: 2129 tuples computed, 13 secondes   
+Info: 5994 tuples in the answer table. 
+Info: 255 tuples in the call table. 
+detail dans le fichier "trajetexclusifcompletlistet" : manque les premières lignes dû au nombre trop élevés de réponses qui ne s'affichent pas dans le terminal.
 
      
 DES> trajetexclusif(gare_lille_flandres, gare_lille_europe) 
+reduit
+Info: 0 tuples computed, 1 seconde
+Info: 695 tuples in the answer table.  
+Info: 168 tuples in the call table. 
+complet
+{
+}
+Info: 0 tuples computed, 17 secondes
+Info: 5355 tuples in the answer table.
+Info: 560 tuples in the call table.          
+Logique de trouver la même réponse pour les 2 gares.
+
+
+Question 8 :
+Info: 372 tuples computed.          
+
+liste des réponses : voir fichier "pairesansexclusivite.txt"
+
+Question 9 :
+DES> metroinutile(A,B) 
 
 {
 }
-Info: 0 tuples computed.          
-Logique de trouver la même réponse pour les 2 gares.
+Info: 0 tuples computed.
 
-Question 8 :
-
-Question 9 :
 
 Question 10 :
 DES> solutions(X,Y) 
@@ -136,4 +174,5 @@ DES> solutions(X,Y)
 }
 Info: 1 tuple computed.          
 
+Il y a un tigre dans la première cellule et une princesse dans la seconde.
 
